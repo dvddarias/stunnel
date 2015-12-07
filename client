@@ -11,7 +11,7 @@ if [ $3 = "-d" ] ; then
 	identity="/stunnel/develop-id/id_rsa"
 fi
 
-exec ssh -vN ${1?"The first parameter should be a domain."} -p ${2?"The second parameter should be a port"}  $forward \
+exec ssh -N ${1?"The first parameter should be a domain."} -p ${2?"The second parameter should be a port"}  $forward \
 	-o ConnectTimeout=5 \
     -o ServerAliveInterval=5 \
     -o ServerAliveCountMax=3 \

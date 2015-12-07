@@ -17,7 +17,7 @@ if [ $2 = "-d" ] ; then
 	authcommand="/stunnel/auth-commands/auto-auth.sh"
 fi
 
-exec /usr/sbin/sshd -dD \
+exec /usr/sbin/sshd -D \
 	-o Port=${1?"The second parameter should be a port"} \
 	-o PasswordAuthentication=no \
 	-o PermitRootLogin=without-password \

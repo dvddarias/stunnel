@@ -1,0 +1,20 @@
+#!/bin/sh
+forward=`
+env | grep -i '^FORWARD' | cut -d "=" -f2- | while read line ; do
+forwards="${forwards} -L ${line}"
+echo $forwards
+done | tail -1;`
+
+identity="/stunnel/id_rsa"
+
+if [ $3 = "-d" ] ; then
+	identity="/stunnel/develop-id/id_rsa"
+fi
+
+exec ssh -vN ${1?"The first parameter should be a domain."} -p ${2?"The second parameter should be a port"}  $forward \
+	-o ConnectTimeout=5 \
+    -o ServerAliveInterval=5 \
+    -o ServerAliveCountMax=3 \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/stunnel/known_hosts \
+    -o IdentityFile=${identity}

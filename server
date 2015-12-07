@@ -1,0 +1,30 @@
+#!/bin/sh
+cd /stunnel
+mkdir -p host-keys
+cd host-keys
+
+if [ ! -f ./ssh_host_key         ]; then  ssh-keygen -qt rsa1    -P "" -f ./ssh_host_key ; fi
+if [ ! -f ./ssh_host_rsa_key     ]; then  ssh-keygen -qt rsa     -P "" -f ./ssh_host_rsa_key ; fi
+if [ ! -f ./ssh_host_dsa_key     ]; then  ssh-keygen -qt dsa     -P "" -f ./ssh_host_dsa_key ; fi
+if [ ! -f ./ssh_host_ecdsa_key   ]; then  ssh-keygen -qt ecdsa   -P "" -f ./ssh_host_ecdsa_key ; fi
+if [ ! -f ./ssh_host_ed25519_key ]; then  ssh-keygen -qt ed25519 -P "" -f ./ssh_host_ed25519_key ; fi
+
+cd /stunnel
+
+authcommand="/stunnel/auth-commands/auth.sh"
+
+if [ $2 = "-d" ] ; then
+	authcommand="/stunnel/auth-commands/auto-auth.sh"
+fi
+
+exec /usr/sbin/sshd -dD \
+	-o Port=${1?"The second parameter should be a port"} \
+	-o PasswordAuthentication=no \
+	-o PermitRootLogin=without-password \
+	-o HostKey="/stunnel/host-keys/ssh_host_key" \
+	-o HostKey="/stunnel/host-keys/ssh_host_rsa_key" \
+	-o HostKey="/stunnel/host-keys/ssh_host_dsa_key" \
+	-o HostKey="/stunnel/host-keys/ssh_host_ecdsa_key" \
+	-o HostKey="/stunnel/host-keys/ssh_host_ed25519_key" \
+	-o AuthorizedKeysCommand=${authcommand} \
+	-o AuthorizedKeysCommandUser=root
